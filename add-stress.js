@@ -41,18 +41,15 @@ async function traverse(elm) {
         }
 
         for (var i = 0; i < elm.childNodes.length; i++) {
-            // recursively call to traverse
             traverse(elm.childNodes[i]);
         }
     }
 
     if (elm.nodeType == Node.TEXT_NODE) {
         if (elm.nodeValue.trim() == "") {
-            // exclude text node consisting of only spaces
             return
         }
 
-        // elm.nodeValue here is visible text we need.
         // console.log(elm.nodeValue);
         var stressedText = await callStressApi(elm.nodeValue);
         // console.log(">>", stressedText);
@@ -62,57 +59,7 @@ async function traverse(elm) {
 
 async function replaceText() {
     traverse(document);
-    //var elements = document.getElementsByTagName('*');
-    // var elements = document.querySelectorAll('body > *');
-    // var arr = elements.children;
-    // var arrLength = arr.length;
-    // for (var i = 0; i < arrLength; i++) {
-    //     stuff = arr[i];
-    //     text = arr[i].textContent;
-    //     console.log(text);
-    // }
-
-    // for (let elem of document.getElementsByTagName('*')) { //querySelectorAll('body > *')) {
-    //     if (!tagsToIgnore.includes(elem.nodeName.toLocaleLowerCase())) {
-    //         //if (elem.nodeName !== "SCRIPT" && elem.nodeName !== "STYLE") {
-    //         console.log(elem.nodeName);
-    //         if (elem.textContent !== "") {//} && elem.querySelectorAll('*').length == 0) {
-    //             var text = elem.textContent;
-    //             if (!isBlank(text)) {
-    //                 var stressedText = await callStressApi(text);
-    //                 console.log(">>", stressedText);
-    //                 elem.textContent = stressedText;
-    //             }
-    //         }
-    //     }
-    // }
 }
-// [... document.querySelectorAll("*")].forEach(ele=>{
-
-//     if(ele.nodeName == 'SCRIPT' ||ele.nodeName == 'STYLE'){return;} //don't want to replace script and style tags
-
-//     if(ele.innerHTML != "" & ele.querySelectorAll("*").length==0){ //check for element inside element 
-//       ele.innerHTML = "myHtml"; //replace with your html
-//     }
-//     });
-
-// for (var i = 0; i < elements.length; i++) {
-//     var element = elements[i];
-
-//     for (var j = 0; j < element.childNodes.length; j++) {
-//         var node = element.childNodes[j];
-
-//         if (node.nodeType === 3) {
-//             //var text = node.nodeValue;
-//             var text = node.textContent;
-//             if (!isBlank(text)) {
-//                 var stressedText = await callStressApi(text);
-//                 console.log(stressedText);
-//                 element.replaceChild(document.createTextNode(stressedText), node);
-//             }
-//         }
-//     }
-// }
 
 function isBlank(str) {
     return (!str || /^\s*$/.test(str));
@@ -144,3 +91,4 @@ async function callStressApi(textToStress) {
 }
 
 browser.runtime.onMessage.addListener(addStressReceiver);
+
