@@ -50,15 +50,15 @@ async function traverse(elm) {
             return
         }
 
-        // console.log(elm.nodeValue);
         var stressedText = await callStressApi(elm.nodeValue);
-        // console.log(">>", stressedText);
         elm.nodeValue = stressedText;
     }
 }
 
 async function replaceText() {
+    console.time('traverse');
     traverse(document);
+    console.timeEnd('traverse');
 }
 
 function isBlank(str) {

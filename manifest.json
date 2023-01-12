@@ -22,5 +22,8 @@
         "add-stress.js"
       ]
     }
-  ]
+  ],
+  "icons": {
+    "136": "icon@2x.png"
+  }
 }
