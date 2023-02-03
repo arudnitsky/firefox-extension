@@ -1,28 +1,29 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "add-ukr-stress",
   "version": "0.1",
   "permissions": [
     "activeTab",
     "contextMenus",
     "webRequest",
+    "scripting"
+  ],
+
+  "host_permissions": [
     "http://127.0.0.1/*"
   ],
+
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "background.js"
   },
+
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "add-stress.js"
-      ]
+      "matches": ["<all_urls>"],
+      "js": ["add-stress.js"]
     }
   ],
+
   "icons": {
     "256": "icon256@2x.png",
     "96": "icon96@2x.png",

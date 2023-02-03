@@ -1,26 +1,22 @@
-browser.contextMenus.create({
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("onInstalled.addListener");  
+  chrome.contextMenus.create({
     id: "add-stress",
     title: "Add stress marks"
   });
-  
-  function messageTab(tabs) {
-    browser.tabs.sendMessage(tabs[0].id, {});
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  console.log("onClicked.addListener");
+  if (info.menuItemId === "add-stress") {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      files: ["add-stress.js"]
+    }).then(sendMessage(tab.id));
   }
-  
-  function onExecuted(result) {
-      let querying = browser.tabs.query({
-          active: true,
-          currentWindow: true
-      });
-      querying.then(messageTab);
-  }
-  
-  browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === "add-stress") {
-      let executing = browser.tabs.executeScript({
-        file: "add-stress.js"
-      });
-      executing.then(onExecuted);
-    }
-  });
-  
+});
+
+function sendMessage(tabId) {
+  console.log("sendMessage")
+  chrome.tabs.sendMessage(tabId, {});
+}

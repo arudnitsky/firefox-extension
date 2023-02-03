@@ -1,36 +1,14 @@
+chrome.runtime.onMessage.addListener(addStressReceiver);
+
 function addStressReceiver(request, sender, sendResponse) {
+    console.log("addStressReceiver")
     replaceText();
 }
 
-var tagsToIgnore = [
-    '[document]',
-    'noscript',
-    'header',
-    'html',
-    'meta',
-    'head',
-    'input',
-    'script',
-    'style'
-];
-
-function isExcluded(elm) {
-    if (elm.tagName == "STYLE") {
-        return true;
-    }
-    if (elm.tagName == "SCRIPT") {
-        return true;
-    }
-    if (elm.tagName == "NOSCRIPT") {
-        return true;
-    }
-    if (elm.tagName == "IFRAME") {
-        return true;
-    }
-    if (elm.tagName == "OBJECT") {
-        return true;
-    }
-    return false
+async function replaceText() {
+    console.time('traverse');
+    traverse(document);
+    console.timeEnd('traverse');
 }
 
 async function traverse(elm) {
@@ -55,14 +33,23 @@ async function traverse(elm) {
     }
 }
 
-async function replaceText() {
-    console.time('traverse');
-    traverse(document);
-    console.timeEnd('traverse');
-}
-
-function isBlank(str) {
-    return (!str || /^\s*$/.test(str));
+function isExcluded(elm) {
+    if (elm.tagName == "STYLE") {
+        return true;
+    }
+    if (elm.tagName == "SCRIPT") {
+        return true;
+    }
+    if (elm.tagName == "NOSCRIPT") {
+        return true;
+    }
+    if (elm.tagName == "IFRAME") {
+        return true;
+    }
+    if (elm.tagName == "OBJECT") {
+        return true;
+    }
+    return false
 }
 
 async function callStressApi(textToStress) {
@@ -89,6 +76,3 @@ async function callStressApi(textToStress) {
 
     return json["stressedtext"];
 }
-
-browser.runtime.onMessage.addListener(addStressReceiver);
-
