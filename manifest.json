@@ -8,26 +8,34 @@
     "webRequest",
     "scripting"
   ],
-
   "host_permissions": [
-    "http://127.0.0.1/*"
+    "<all_urls>"
   ],
-
   "background": {
-    "service_worker": "background.js"
+    "scripts": [
+      "background.js"
+    ]
   },
-
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["add-stress.js"]
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+        "walkNodeTree.js",
+        "add-stress.js"
+      ]
     }
   ],
-
   "icons": {
     "256": "icon256@2x.png",
     "96": "icon96@2x.png",
     "48": "icon48@2x.png",
     "16": "icon16@2x.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "c03cde80ef1e7ee0a8c6ba38b6e941ace7a2f6fb@temporary-addon"
+    }
   }
 }

@@ -1,58 +1,35 @@
-chrome.runtime.onMessage.addListener(addStressReceiver);
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+        if (request.selection)
+            console.log(request.selection);
+        replaceText();
+    }
+);
 
-function addStressReceiver(request, sender, sendResponse) {
-    console.log("addStressReceiver")
-    replaceText();
-}
-
-async function replaceText() {
+function replaceText() {
     console.time('traverse');
-    traverse(document);
+    let nodes = textNodesUnder(document);
     console.timeEnd('traverse');
+    console.time('replace');
+    nodes.forEach(element => { replaceWithStressedText(element) });
+    console.timeEnd('replace');
 }
 
-async function traverse(elm) {
-    if (elm.nodeType == Node.ELEMENT_NODE || elm.nodeType == Node.DOCUMENT_NODE) {
-        if (isExcluded(elm)) {
-            // exclude elements with invisible text nodes
-            return
-        }
-
-        for (var i = 0; i < elm.childNodes.length; i++) {
-            traverse(elm.childNodes[i]);
-        }
-    }
-
-    if (elm.nodeType == Node.TEXT_NODE) {
-        if (elm.nodeValue.trim() == "") {
-            return
-        }
-
-        var stressedText = await callStressApi(elm.nodeValue);
-        elm.nodeValue = stressedText;
-    }
+function textNodesUnder(el) {
+    return walkNodeTree(el, {
+        inspect: n => !['STYLE', 'SCRIPT', 'NOSCRIPT', 'IFRAME', 'OBJECT', 'HEAD'].includes(n.nodeName),
+        collect: n => ((n.nodeType === Node.TEXT_NODE) && (n.nodeValue.trim())),
+    });
 }
 
-function isExcluded(elm) {
-    if (elm.tagName == "STYLE") {
-        return true;
-    }
-    if (elm.tagName == "SCRIPT") {
-        return true;
-    }
-    if (elm.tagName == "NOSCRIPT") {
-        return true;
-    }
-    if (elm.tagName == "IFRAME") {
-        return true;
-    }
-    if (elm.tagName == "OBJECT") {
-        return true;
-    }
-    return false
+async function replaceWithStressedText(n) {
+    console.log(n);
+    var stressedText = await callStressApi(n.nodeValue);
+    n.nodeValue = stressedText;
 }
 
 async function callStressApi(textToStress) {
+    // url = 'http://192.168.1.7:5000/api/stress';
     url = 'http://127.0.0.1:5000/api/stress';
 
     const requestOptions = {
