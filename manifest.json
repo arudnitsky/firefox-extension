@@ -11,10 +11,16 @@
   "host_permissions": [
     "<all_urls>"
   ],
+  // firefox
+  // "background": {
+  //   "scripts": [
+  //     "background.js"
+  //   ]
+  // },
+
+  // chrome
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
@@ -32,10 +38,12 @@
     "96": "icon96@2x.png",
     "48": "icon48@2x.png",
     "16": "icon16@2x.png"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "c03cde80ef1e7ee0a8c6ba38b6e941ace7a2f6fb@temporary-addon"
-    }
   }
+  //,
+  // firefox
+  // "browser_specific_settings": {
+  //   "gecko": {
+  //     "id": "c03cde80ef1e7ee0a8c6ba38b6e941ace7a2f6fb@temporary-addon"
+  //   }
+  // }
 }

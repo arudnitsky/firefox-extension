@@ -1,7 +1,9 @@
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        if (request.selection)
-            console.log(request.selection);
+        if (request.selection) {
+            console.debug(request.selection);
+            sendResponse({farewell: "goodbye"});
+        }
         replaceText();
     }
 );
@@ -23,7 +25,6 @@ function textNodesUnder(el) {
 }
 
 async function replaceWithStressedText(n) {
-    console.log(n);
     var stressedText = await callStressApi(n.nodeValue);
     n.nodeValue = stressedText;
 }
@@ -31,6 +32,14 @@ async function replaceWithStressedText(n) {
 async function callStressApi(textToStress) {
     // url = 'http://192.168.1.7:5000/api/stress';
     url = 'http://127.0.0.1:5000/api/stress';
+
+    if (!textToStress) {
+        console.warn('Empty string passed to callStressApi')
+        return;
+    }
+
+    console.debug(textToStress);
+    console.debug(JSON.stringify({"text":textToStress}));
 
     const requestOptions = {
         method: 'POST',
@@ -44,7 +53,15 @@ async function callStressApi(textToStress) {
         })
     };
 
-    const response = await fetch(url, requestOptions);
+    console.debug(url);
+    console.debug({requestOptions});
+
+    var response;
+    try {
+        response = await fetch(url, requestOptions); 
+    } catch (error) {
+        console.error({error});
+    }
     if (response.status !== 200) {
         return "Error";
     }

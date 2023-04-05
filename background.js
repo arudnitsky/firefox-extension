@@ -1,27 +1,49 @@
-console.log("background.js executed");
+var scriptHasBeenInjected = false;
+
+console.log("background.js executing");
+chrome.contextMenus.onClicked.addListener(onClickHandler);
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "add-stress",
     title: "Add stress marks"
   });
-  console.log("onInstalled.addListener");
+  console.debug("onInstalled.addListener done");
 });
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  console.log("onClicked.addListener");
+function onClickHandler(info, tab) {
+  console.debug("onClickHandler");
   if (info.menuItemId === "add-stress") {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ["walkNodeTree.js", "add-stress.js"],
-    }).then( () => {
-    console.log("executeScript done");
-    sendMessage(tab.id);});
+    if (!scriptHasBeenInjected) {
+      injectScripts(tab.id);
+    }
+    sendMessageToTab(tab.id);
   }
-});
+  console.debug("onClickHandler done");
+}
 
-function sendMessage(tabId) {
-  console.log("sendMessage " + tabId)
-  response = chrome.tabs.sendMessage(tabId, {"selection": null});
-  console.log(response.farewell);
+function injectScripts(tabId) {
+  try {
+    for (const cs of chrome.runtime.getManifest().content_scripts) {
+      chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: cs.js,
+      });
+    }
+    scriptHasBeenInjected = true;
+    console.debug("injectScript done");
+  } catch (error) {
+    console.error("Could not inject scripts");
+    console.error(error);
+  }
+}
+
+function sendMessageToTab(tabId) {
+  console.debug("sendMessageToTab " + tabId)
+  chrome.tabs.sendMessage(tabId, { "selection": null } /*, logResponse*/);
+  console.debug("sendMessageToTab done");
+}
+
+function logResponse(message) {
+  console.debug(message);
 }

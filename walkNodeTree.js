@@ -1,5 +1,3 @@
-console.log("walkNodeTree.js executed");
-
 //https://stackoverflow.com/questions/10730309/find-all-text-nodes-in-html-page
 function walkNodeTree(root, options) {
     options = options || {};
